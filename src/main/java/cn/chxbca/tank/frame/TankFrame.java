@@ -32,8 +32,7 @@ public class TankFrame extends Frame {
     private final Tank mainTank = new Tank(200, 300, width, height);
 
     private final ExecutorService executorService = new ThreadPoolExecutor(
-            corePoolSize, maximumPoolSize,
-            0L, TimeUnit.MILLISECONDS,
+            corePoolSize, maximumPoolSize, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(),
             threadFactoryBuilder.setNameFormat("Thread-Pool-%d").build()
     );
@@ -61,8 +60,6 @@ public class TankFrame extends Frame {
                 //noinspection InfiniteLoopStatement
                 for (; ; ) {
                     TimeUnit.MICROSECONDS.sleep(500);
-                    String name = Thread.currentThread().getName();
-                    System.out.println(name);
                     repaint();
                 }
             } catch (InterruptedException e) {
