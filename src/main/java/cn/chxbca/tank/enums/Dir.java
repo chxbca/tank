@@ -7,17 +7,27 @@ public enum Dir {
     /**
      * up
      */
-    UP,
-    /**
-     * down
-     */
-    DOWN,
+    UP(0),
     /**
      * left
      */
-    LEFT,
+    LEFT(90),
+    /**
+     * down
+     */
+    DOWN(180),
     /**
      * right
      */
-    RIGHT
+    RIGHT(270);
+
+    private final int angel;
+
+    Dir(int angel) {
+        this.angel = angel;
+    }
+
+    public int getAngel() {
+        return angel;
+    }
 }

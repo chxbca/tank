@@ -45,7 +45,7 @@ public class Tank extends AbstractWarModel {
     }
 
     public void fire() {
-        Bullet bullet = new Bullet(x, y, dir, tankFrame);
+        Bullet bullet = new Bullet(x, y, TANK_WIDTH, TANK_HEIGHT, dir, tankFrame);
         tankFrame.addBullet(bullet);
     }
 }
