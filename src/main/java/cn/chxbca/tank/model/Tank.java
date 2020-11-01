@@ -2,6 +2,7 @@ package cn.chxbca.tank.model;
 
 import cn.chxbca.tank.enums.Dir;
 import cn.chxbca.tank.frame.TankFrame;
+import cn.chxbca.tank.resource.ImageResource;
 
 import java.awt.*;
 
@@ -11,13 +12,11 @@ import java.awt.*;
 public class Tank extends AbstractWarModel {
 
     private static final int TANK_SPEED = 1;
-    private static final int TANK_WIDTH = 20;
-    private static final int TANK_HEIGHT = 20;
     private final TankFrame tankFrame;
     private boolean isMove = false;
 
     public Tank(int x, int y, TankFrame tankFrame) {
-        super(x, y, TANK_SPEED, Dir.RIGHT, TANK_HEIGHT, TANK_WIDTH, tankFrame);
+        super(x, y, TANK_SPEED, Dir.RIGHT, tankFrame);
         this.x = x;
         this.y = y;
         this.tankFrame = tankFrame;
@@ -25,14 +24,37 @@ public class Tank extends AbstractWarModel {
 
     @Override
     public void paint(Graphics graphics) {
+        Image tankImage = getTankImage();
         if (isMove) {
             move();
-            if (isOutBound()) {
-                resetModel();
+            int width = tankImage.getWidth(tankFrame);
+            int height = tankImage.getHeight(tankFrame);
+            if (isOutBound(width, height)) {
+                resetModel(width, height);
             }
         }
-        graphics.setColor(Color.BLACK);
-        graphics.drawRect(x, y, Tank.TANK_WIDTH, Tank.TANK_HEIGHT);
+        graphics.drawImage(tankImage, x, y, null);
+    }
+
+    private Image getTankImage() {
+        Image tankImage;
+        switch (dir) {
+            case UP:
+                tankImage = ImageResource.TANK_UP;
+                break;
+            case LEFT:
+                tankImage = ImageResource.TANK_LEFT;
+                break;
+            case DOWN:
+                tankImage = ImageResource.TANK_DOWN;
+                break;
+            case RIGHT:
+                tankImage = ImageResource.TANK_RIGHT;
+                break;
+            default:
+                throw new Error();
+        }
+        return tankImage;
     }
 
     public void setDir(Dir dir) {
@@ -45,7 +67,8 @@ public class Tank extends AbstractWarModel {
     }
 
     public void fire() {
-        Bullet bullet = new Bullet(x, y, TANK_WIDTH, TANK_HEIGHT, dir, tankFrame);
+        Image tankImage = getTankImage();
+        Bullet bullet = new Bullet(x, y, tankImage.getWidth(tankFrame), tankImage.getHeight(tankFrame), dir, tankFrame);
         tankFrame.addBullet(bullet);
     }
 }

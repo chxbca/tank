@@ -11,19 +11,16 @@ import java.awt.*;
  */
 public abstract class AbstractWarModel {
 
-    private final int height, width;
     protected int x, y;
     protected int speed;
     protected Dir dir;
     protected TankFrame tankFrame;
 
-    public AbstractWarModel(int x, int y, int speed, Dir dir, int height, int width, TankFrame tankFrame) {
+    public AbstractWarModel(int x, int y, int speed, Dir dir, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.speed = speed;
-        this.width = width;
-        this.height = height;
         this.tankFrame = tankFrame;
     }
 
@@ -46,19 +43,19 @@ public abstract class AbstractWarModel {
         }
     }
 
-    protected boolean isOutBound() {
+    protected boolean isOutBound(int width, int height) {
         return x < 0 ||
-                y < height ||
+                y < 0 ||
                 x > (TankFrame.GAME_WIDTH - width) ||
                 y > (TankFrame.GAME_HEIGHT - height);
     }
 
-    protected void resetModel() {
+    protected void resetModel(int width, int height) {
         if (x < 0) {
             x = 0;
         }
         if (y < height) {
-            y = height;
+            y = 0;
         }
         if (x > (TankFrame.GAME_WIDTH - width)) {
             x = TankFrame.GAME_WIDTH - width;
