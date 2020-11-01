@@ -1,6 +1,7 @@
 package cn.chxbca.tank.frame;
 
 import cn.chxbca.tank.enums.Dir;
+import cn.chxbca.tank.model.Bullet;
 import cn.chxbca.tank.model.Tank;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -9,6 +10,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,9 +22,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class TankFrame extends Frame {
 
-    private final int width = 800;
+    public static final int GAME_WIDTH = 800;
 
-    private final int height = 600;
+    public static final int GAME_HEIGHT = 600;
 
     private final int maximumPoolSize = 1;
 
@@ -29,17 +32,17 @@ public class TankFrame extends Frame {
 
     private final ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder();
 
-    private final Tank mainTank = new Tank(200, 300, width, height);
-
+    private final Tank mainTank = new Tank(200, 300, this);
     private final ExecutorService executorService = new ThreadPoolExecutor(
             corePoolSize, maximumPoolSize, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(),
             threadFactoryBuilder.setNameFormat("Thread-Pool-%d").build()
     );
+    private final List<Bullet> bulletCollection = new ArrayList<>();
 
     public TankFrame() {
         setVisible(true);
-        setSize(width, height);
+        setSize(GAME_WIDTH, GAME_HEIGHT);
         addKeyListener(new TankKeyListener());
         addWindowListener(new WindowAdapter() {
             @Override
@@ -49,9 +52,19 @@ public class TankFrame extends Frame {
         });
     }
 
+    public void addBullet(Bullet bullet) {
+        bulletCollection.add(bullet);
+    }
+
     @Override
     public void paint(Graphics g) {
         this.mainTank.paint(g);
+        int i = 0;
+        while (i < bulletCollection.size()) {
+            Bullet bullet = bulletCollection.get(i);
+            bullet.paint(g);
+            i++;
+        }
     }
 
     public void gameStart() {
@@ -67,6 +80,10 @@ public class TankFrame extends Frame {
             }
         };
         executorService.execute(runnable);
+    }
+
+    public void deleteBullet(Bullet bullet) {
+        bulletCollection.remove(bullet);
     }
 
     class TankKeyListener extends KeyAdapter {
@@ -92,7 +109,18 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            mainTank.stopTank();
+            int keyCode = e.getKeyCode();
+            switch (keyCode) {
+                case KeyEvent.VK_W:
+                case KeyEvent.VK_S:
+                case KeyEvent.VK_A:
+                case KeyEvent.VK_D:
+                    mainTank.stopTank();
+                    break;
+                case KeyEvent.VK_SPACE:
+                    mainTank.fire();
+                default:
+            }
         }
     }
 }
